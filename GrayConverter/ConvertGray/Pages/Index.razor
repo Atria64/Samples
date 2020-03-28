@@ -1,0 +1,49 @@
+﻿@page "/"
+@inject IBlazorFileUp fileUploadService
+@inject IGrayConverter grayConverter
+
+<h1>Hello, world!</h1>
+
+<p>これは <a href="">Blazor上でアップした画像をグレースケールに変換する | AtriaSoft</a> のサンプルです。</p>
+
+<h2>グレースケール変換器</h2>
+<InputFile OnChange="HandleFileSelected"></InputFile><br/>
+<p>@status</p>
+
+<button @onclick="ConvertGray">Convart Gray!</button>
+<p>@status2</p>
+
+<br />
+<img src=@Image asp-append-version="true" width="300" />
+@code {
+    string status;
+    string status2;
+    string path;
+    private string Image = "";
+
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        IFileListEntry file = files.FirstOrDefault();
+        if (file != null)
+        {
+            path = await fileUploadService.UploadAsync(file);
+
+            status = $"Finished loading {file.Size} bytes from {file.Name}";
+
+            Image = "/Upload/" + file.Name.ToString();
+
+        }
+    }
+
+    private void ConvertGray()
+    {
+        if (grayConverter.GrayConvert(path))
+        {
+            status2 = "成功";
+            Image = "/Upload/Gray"+Path.GetFileName(path);
+        }
+        else status2 = "失敗";
+
+    }
+}
