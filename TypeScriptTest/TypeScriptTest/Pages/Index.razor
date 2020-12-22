@@ -1,0 +1,23 @@
+﻿@inject IJSRuntime JSRuntime
+@page "/"
+
+<h1>TypeScriptTest</h1>
+
+<input @bind="text" @bind:event="oninput" />
+<button @onclick="TsAlertClick">TsAlert</button>
+<button @onclick="TsEditTextClick">@TsEditText</button>
+
+@code{
+    string text;
+    string TsEditText = "TsEditText";
+
+    private void TsAlertClick()
+    {
+        JSRuntime.InvokeVoidAsync("Functions.showAlert", text);
+    }
+
+    private async Task TsEditTextClick()
+    {
+        TsEditText = await JSRuntime.InvokeAsync<string>("Functions.editText", text);
+    }
+}
